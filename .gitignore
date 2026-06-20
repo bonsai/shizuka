@@ -1,0 +1,9 @@
+*.exe
+*.exe~
+seed.db
+__pycache__/
+*.pyc
+.env
+*.env
+.DS_Store
+model-status.db

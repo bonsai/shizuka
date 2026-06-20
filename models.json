@@ -1,0 +1,836 @@
+{
+  "version": 1,
+  "priorities": [
+    {
+      "cli": "qwen",
+      "entries": [
+        {
+          "provider": "dashscope",
+          "useRotation": true,
+          "note": "無料枠ローテーション"
+        }
+      ]
+    },
+    {
+      "cli": "opencode",
+      "entries": [
+        {
+          "provider": "opencode-zen",
+          "model": "",
+          "note": "zen"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openrouter/owl-alpha",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-coder:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-120b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-20b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3.3-70b-instruct:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemma-4-31b-it:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemma-4-26b-a4b-it:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nvidia/nemotron-3-super-120b-a12b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "note": "free pool"
+        }
+      ]
+    },
+    {
+      "cli": "cline",
+      "entries": [
+        {
+          "provider": "openai-native",
+          "model": "preview/Kimi-K2.6",
+          "note": "sakura"
+        },
+        {
+          "provider": "openai-native",
+          "model": "Qwen3-Coder-480B-A35B-Instruct-FP8",
+          "note": "sakura"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemini-2.0-flash-exp:free"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-sonnet-4-6"
+        }
+      ]
+    },
+    {
+      "cli": "codex",
+      "entries": []
+    },
+    {
+      "cli": "gemini",
+      "entries": [
+        {
+          "provider": "google-oauth",
+          "model": "gemini-2.5-pro-preview-05-06",
+          "note": "OAuth認証済み"
+        },
+        {
+          "provider": "google-oauth",
+          "model": "gemini-2.0-flash-exp"
+        },
+        {
+          "provider": "google-oauth",
+          "model": "gemini-2.5-flash-preview-04-17"
+        }
+      ]
+    },
+    {
+      "cli": "kilo",
+      "entries": [
+        {
+          "provider": "openai-native",
+          "model": "Qwen3-Coder-480B-A35B-Instruct-FP8",
+          "note": "sakura"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemini-2.0-flash-exp:free"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openrouter/owl-alpha",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-coder:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-120b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-sonnet-4-6"
+        }
+      ]
+    },
+    {
+      "cli": "kiro",
+      "entries": [
+        {
+          "provider": "amazon-bedrock",
+          "model": "amazon.nova-pro-v1"
+        },
+        {
+          "provider": "amazon-bedrock",
+          "model": "anthropic.claude-3-5-sonnet-20241022-v2:0"
+        }
+      ]
+    },
+    {
+      "cli": "claude",
+      "entries": [
+        {
+          "provider": "anthropic",
+          "model": "claude-fable-5",
+          "note": "現在のデフォルト"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-sonnet-4-6"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-opus-4-8"
+        },
+        {
+          "provider": "anthropic",
+          "model": "claude-haiku-4-5-20251001"
+        }
+      ]
+    },
+    {
+      "cli": "qwencode",
+      "entries": [
+        {
+          "provider": "dashscope",
+          "useRotation": true,
+          "note": "無料枠ローテーション"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-coder:free",
+          "note": "free coding"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openrouter/owl-alpha",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-120b:free",
+          "note": "free pool"
+        }
+      ]
+    },
+    {
+      "cli": "hermes",
+      "entries": [
+        {
+          "provider": "lm",
+          "model": "gemma-4-12b-it-qat-q8_0",
+          "note": "LM Studio QAT 12.7GB"
+        },
+        {
+          "provider": "lm",
+          "model": "gemma-4-12b-it-qat-q4_k_m",
+          "note": "LM Studio QAT 7.4GB"
+        },
+        {
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "note": "default"
+        }
+      ]
+    },
+    {
+      "cli": "goose",
+      "entries": [
+        {
+          "provider": "openai",
+          "model": "deepseek-chat",
+          "note": "default"
+        },
+        {
+          "provider": "openai",
+          "model": "deepseek-reasoner",
+          "note": "reasoning"
+        }
+      ]
+    },
+    {
+      "cli": "crush-large",
+      "entries": [
+        {
+          "provider": "openrouter",
+          "model": "openrouter/owl-alpha",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-coder:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-120b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-20b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3.3-70b-instruct:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemma-4-31b-it:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemma-4-26b-a4b-it:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nvidia/nemotron-3-super-120b-a12b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "note": "free pool"
+        }
+      ]
+    },
+    {
+      "cli": "crush-small",
+      "entries": [
+        {
+          "provider": "openrouter",
+          "model": "openrouter/owl-alpha",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-coder:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-120b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "openai/gpt-oss-20b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "meta-llama/llama-3.3-70b-instruct:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemma-4-31b-it:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "google/gemma-4-26b-a4b-it:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nvidia/nemotron-3-super-120b-a12b:free",
+          "note": "free pool"
+        },
+        {
+          "provider": "openrouter",
+          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+          "note": "free pool"
+        }
+      ]
+    }
+  ],
+  "qwenRotation": [
+    {
+      "modelID": "qwen3.5-122b-a10b",
+      "expires": "2026/05/25",
+      "exhausted": true
+    },
+    {
+      "modelID": "qwen3.5-plus-2026-04-20",
+      "expires": "2026/07/23",
+      "exhausted": true
+    },
+    {
+      "modelID": "qwen3.5-flash-2026-02-23",
+      "expires": "2026/05/25",
+      "exhausted": true
+    },
+    {
+      "modelID": "qwen3.7-max-2026-05-20",
+      "expires": "2026/08/20",
+      "exhausted": false
+    },
+    {
+      "modelID": "qwen3.6-flash-2026-04-16",
+      "expires": "2026/07/17",
+      "exhausted": false
+    },
+    {
+      "modelID": "qwen3.5-27b",
+      "expires": "",
+      "exhausted": false
+    }
+  ],
+  "modelSpecs": [
+    {
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-6",
+      "costIn": 3.0,
+      "quality": {
+        "low": 8,
+        "mid": 9,
+        "high": 9,
+        "code": 9
+      }
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-4-5-20251001",
+      "costIn": 0.8,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 6,
+        "code": 7
+      }
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-opus-4-7",
+      "costIn": 15.0,
+      "quality": {
+        "low": 8,
+        "mid": 10,
+        "high": 10,
+        "code": 9
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "Qwen3-Coder-480B-A35B-Instruct-FP8",
+      "costIn": 0.2,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 9
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "Qwen3-Coder-30B-A3B-Instruct",
+      "costIn": 0.1,
+      "quality": {
+        "low": 6,
+        "mid": 7,
+        "high": 7,
+        "code": 8
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "gpt-oss-120b",
+      "costIn": 0.1,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "llm-jp-3.1-8x13b-instruct4",
+      "costIn": 0.1,
+      "quality": {
+        "low": 6,
+        "mid": 6,
+        "high": 5,
+        "code": 5
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "preview/Kimi-K2.6",
+      "costIn": 0.4,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "preview/Qwen3-VL-30B-A3B-Instruct",
+      "costIn": 0.1,
+      "quality": {
+        "low": 6,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "preview/Phi-4-multimodal-instruct",
+      "costIn": 0.07,
+      "quality": {
+        "low": 6,
+        "mid": 6,
+        "high": 6,
+        "code": 6
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "preview/Phi-4-mini-instruct-cpu",
+      "costIn": 0.007,
+      "quality": {
+        "low": 5,
+        "mid": 5,
+        "high": 4,
+        "code": 5
+      }
+    },
+    {
+      "provider": "sakura",
+      "model": "preview/Qwen3-0.6B-cpu",
+      "costIn": 0.007,
+      "quality": {
+        "low": 3,
+        "mid": 3,
+        "high": 2,
+        "code": 3
+      }
+    },
+    {
+      "provider": "aihubmix",
+      "model": "claude-sonnet-4-6",
+      "costIn": 3.5,
+      "quality": {
+        "low": 8,
+        "mid": 9,
+        "high": 9,
+        "code": 9
+      }
+    },
+    {
+      "provider": "aihubmix",
+      "model": "coding-minimax-m2.7-free",
+      "costIn": 0,
+      "quality": {
+        "low": 5,
+        "mid": 6,
+        "high": 5,
+        "code": 6
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "google/gemini-2.0-flash-exp:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "google-oauth",
+      "model": "gemini-2.5-pro-preview-05-06",
+      "costIn": 0,
+      "quality": {
+        "low": 8,
+        "mid": 9,
+        "high": 9,
+        "code": 8
+      }
+    },
+    {
+      "provider": "google-oauth",
+      "model": "gemini-2.5-flash-preview-04-17",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "google-oauth",
+      "model": "gemini-2.0-flash-exp",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "amazon-bedrock",
+      "model": "amazon.nova-pro-v1",
+      "costIn": 0.8,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "amazon-bedrock",
+      "model": "anthropic.claude-3-5-sonnet-20241022-v2:0",
+      "costIn": 3.0,
+      "quality": {
+        "low": 8,
+        "mid": 9,
+        "high": 9,
+        "code": 9
+      }
+    },
+    {
+      "provider": "dashscope",
+      "model": "",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "alibaba-singapore",
+      "model": "qwen3.7-max",
+      "costIn": 2.0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "alibaba-singapore",
+      "model": "qwen3.5-27b",
+      "costIn": 0.5,
+      "quality": {
+        "low": 6,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "alibaba-singapore",
+      "model": "",
+      "costIn": 1.5,
+      "quality": {
+        "low": 6,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "openrouter/owl-alpha",
+      "costIn": 0,
+      "quality": {
+        "low": 8,
+        "mid": 9,
+        "high": 9,
+        "code": 9
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "qwen/qwen3-coder:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 9
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "openai/gpt-oss-120b:free",
+      "costIn": 0,
+      "quality": {
+        "low": 8,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "openai/gpt-oss-20b:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "meta-llama/llama-3.3-70b-instruct:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "qwen/qwen3-next-80b-a3b-instruct:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "google/gemma-4-31b-it:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "google/gemma-4-26b-a4b-it:free",
+      "costIn": 0,
+      "quality": {
+        "low": 6,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "nousresearch/hermes-3-llama-3.1-405b:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3-super-120b-a12b:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 8,
+        "high": 9,
+        "code": 8
+      }
+    },
+    {
+      "provider": "lm",
+      "model": "gemma-4-12b-it-qat-q8_0",
+      "costIn": 0,
+      "quality": {
+        "low": 8,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "lm",
+      "model": "gemma-4-12b-it-qat-q4_k_m",
+      "costIn": 0,
+      "quality": {
+        "low": 8,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "openai",
+      "model": "deepseek-chat",
+      "costIn": 0.5,
+      "quality": {
+        "low": 8,
+        "mid": 8,
+        "high": 8,
+        "code": 8
+      }
+    },
+    {
+      "provider": "openai",
+      "model": "deepseek-reasoner",
+      "costIn": 0.5,
+      "quality": {
+        "low": 8,
+        "mid": 9,
+        "high": 9,
+        "code": 8
+      }
+    }
+  ]
+}
