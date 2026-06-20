@@ -178,11 +178,18 @@ func applyCline(provider, model string) error {
 	switch provider {
 	case "openai-native", "sakura":
 		clineProvider = "openai-native"
-		extraArgs = []string{"--baseurl", "https://api.ai.sakura.ad.jp/v1",
-			"--apikey", "88ce95d3-3f79-43c5-80dc-24d6d1075295:pEDC7v0kXtgS7Zx5l+swSmfiveym+Ck3PX98CUOV"}
+		key := os.Getenv("SAKURA_API_KEY")
+		if key == "" {
+			return fmt.Errorf("SAKURA_API_KEY not set")
+		}
+		extraArgs = []string{"--baseurl", "https://api.ai.sakura.ad.jp/v1", "--apikey", key}
 	case "openrouter":
 		clineProvider = "openrouter"
-		extraArgs = []string{"--apikey", "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"}
+		key := os.Getenv("OPENROUTER_API_KEY")
+		if key == "" {
+			return fmt.Errorf("OPENROUTER_API_KEY not set")
+		}
+		extraArgs = []string{"--apikey", key}
 	case "anthropic":
 		clineProvider = "anthropic"
 	}
