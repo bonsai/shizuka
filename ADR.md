@@ -395,3 +395,5 @@ CREATE TABLE usage_log (
 | 2026-05-24 | 008 | ModelSpec保存先の決定（Goハードコード）→ ADR-010で覆す |
 | 2026-05-24 | 009 | TUI 3ペインレイアウトへ変更 |
 | 2026-05-24 | 010 | SQLite移行決定（ADR-002/008を置き換え） |
+| 2026-06-29 | 011 | hamachi統合 — 残高・使用量の一元管理（`adr/ADR-011-hamachi-integration.md`） |
+| 2026-06-29 | 012 | shizuka MCP GCP常駐化 + BigQuery (FastAPI/SSE, `adr/ADR-012-gcp-mcp-bq.md`) |

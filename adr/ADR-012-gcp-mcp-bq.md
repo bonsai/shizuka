@@ -1,7 +1,8 @@
 # ADR-012: shizuka MCP の GCP 常駐化 + BigQuery バックエンド本番運用
 
-**ステータス:** Proposed  
+**ステータス:** Implemented  
 **作成日:** 2026-06-29  
+**更新日:** 2026-06-29  
 **置き換え:** ADR-003 (stdio MCP) / ADR-010 (SQLite 一次) の一部
 
 ---
