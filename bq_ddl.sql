@@ -76,6 +76,17 @@ CREATE TABLE IF NOT EXISTS model_status.ml_params (
 )
 CLUSTER BY param_key;
 
+CREATE TABLE IF NOT EXISTS model_status.balance_snapshots (
+    provider        STRING NOT NULL,
+    total_balance   FLOAT64 NOT NULL,
+    currency        STRING DEFAULT 'USD',
+    is_available    BOOL DEFAULT TRUE,
+    topped_up       FLOAT64 DEFAULT 0,
+    granted         FLOAT64 DEFAULT 0,
+    timestamp       TIMESTAMP NOT NULL
+)
+CLUSTER BY provider, timestamp;
+
 CREATE OR REPLACE VIEW model_status.v_available AS
 SELECT p.*, q.remaining, r.expired, r.expires_at, rec.estimated_at, rec.confidence
 FROM model_status.providers p
