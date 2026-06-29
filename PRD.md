@@ -1,4 +1,22 @@
-# PRD — model-manager
+# PRD: shizuka — Decision Layer (Model Manager)
+
+## 0. 三層アーキテクチャ
+
+```
+soubi (網羅)  →  hamachi (状態)  →  shizuka (判断)
+ 資産台帳        残高・使用量・稼働     最適選択・自動切替
+```
+
+| 層 | リポジトリ | 責務 | DB |
+|---|-----------|------|-----|
+| 網羅 | `bonsai/soubi` | 全プロバイダー・モデル・CLIのカタログ | `inventory.sqlite` |
+| 状態 | `bonsai/hamachi` | 残高・使用量・稼働監視 | `data.db` (balance_snapshots) |
+| **判断** | **`bonsai/shizuka`** | **モデル選択・自動切替・レコメンド** | **`data.db` (providers/usage_log/quota)** |
+
+shizuka は **soubi (カタログ)** と **hamachi (状態)** を入力とし、
+コスト・品質・可用性を総合判断して最適モデルを選択・自動切替する。
+
+---
 
 **バージョン:** 1.0 (current) / 2.0 (planned)  
 **作成日:** 2026-05-24  
@@ -64,9 +82,19 @@ AIコーディングCLIが乱立し（qwen / crush / opencode / cline / codex / 
 | F-14 | タスク難易度入力 (`low` / `mid` / `high` / `code`) | 高 | ✅ 実装済み |
 | F-15 | 使用量ログ（セッションごとのトークン消費記録） | 中 |
 | F-16 | クォータアラート（残量X%以下で警告） | 中 |
-| F-17 | 自動フォールバック（クォータ切れを検知して自動次Pへ） | 中 |
-| F-18 | Cline / OpenCode へのMCP登録 | 低 |
-| F-19 | Webダッシュボード（使用状況可視化） | 低 |
+| F-17 | **自動フォールバック** — hamachi の残高情報を基に枯渇プロバイダーを自動スキップ | 高 |
+| F-18 | **hamachi連携** — `hm_balance` MCPツール呼び出しで選択時に残高考慮 | 高 |
+| F-19 | Cline / OpenCode へのMCP登録 | 低 |
+| F-20 | Webダッシュボード（使用状況可視化） | 低 |
+
+### 自動フォールバックロジック (F-17)
+
+```
+1. shizuka が最適モデルを選択 (F-11)
+2. hamachi balance --json で残高確認 (F-18)
+3. 残高 < $0.50 → そのプロバイダーをスキップ、次優先順位へ
+4. 全プロバイダー枯渇 → alert 発報
+```
 
 ---
 
