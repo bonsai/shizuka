@@ -1,12 +1,16 @@
 """Run hamachi balance, parse output, push to BigQuery balance_snapshots."""
-import json, subprocess, sys
+import json, subprocess, sys, os, tempfile
 from datetime import datetime, timezone
+
+BQ = r"C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\bq.cmd"
+PROJECT = "yok-ai-2026"
+HAMACHI_DIR = r"C:\Users\dance\Documents\MEGA\hamachi\py"
 
 def run_hamachi():
     result = subprocess.run(
         [sys.executable, "-m", "hamachi", "balance"],
         capture_output=True, text=True, timeout=30,
-        cwd="/mnt/c/Users/dance/Documents/MEGA/hamachi/py",
+        cwd=HAMACHI_DIR,
     )
     return result.stdout
 
@@ -19,7 +23,7 @@ def parse_balance(text: str) -> dict:
         elif "残高合計:" in line:
             d["total_balance"] = float(line.split(":")[-1].strip())
         elif "利用可能:" in line:
-            d["is_available"] = "✓" in line
+            d["is_available"] = "OK" in line
         elif "付与残高:" in line:
             d["granted"] = float(line.split(":")[-1].strip())
         elif "チャージ残高:" in line:
@@ -29,24 +33,19 @@ def parse_balance(text: str) -> dict:
 def push_to_bq(b: dict):
     now = datetime.now(timezone.utc).isoformat()
     sql = (
-        "INSERT INTO model_status.balance_snapshots "
-        "(provider, total_balance, currency, is_available, topped_up, granted, timestamp) "
+        f"INSERT INTO model_status.balance_snapshots "
+        f"(provider, total_balance, currency, is_available, topped_up, granted, timestamp) "
         f"VALUES ('deepseek', {b.get('total_balance', 0)}, '{b.get('currency', 'USD')}', "
         f"{str(b.get('is_available', True)).upper()}, "
         f"{b.get('topped_up', 0)}, {b.get('granted', 0)}, "
         f"TIMESTAMP('{now}'))"
     )
-    # Write SQL to temp file for bq flagfile
-    with open("/tmp/shizuka/schema/balance_insert.sql", "w") as f:
+    # Write SQL to temp file to avoid quoting issues
+    tmp = os.path.join(tempfile.gettempdir(), "balance_insert.sql")
+    with open(tmp, "w") as f:
         f.write(sql)
-    print(f"SQL: {sql}")
-    # Run via cmd.exe
     subprocess.run(
-        ["cmd.exe", "/c",
-         "copy \\\\wsl.localhost\\Ubuntu-24.04\\tmp\\shizuka\\schema\\balance_insert.sql "
-         "C:\\Users\\dance\\AppData\\Local\\Temp\\balance_insert.sql /Y >nul 2>&1 && "
-         "bq query --nouse_legacy_sql --project_id=yok-ai-2026 "
-         "--flagfile=C:\\Users\\dance\\AppData\\Local\\Temp\\balance_insert.sql"],
+        [BQ, "query", "--nouse_legacy_sql", f"--project_id={PROJECT}", f"--flagfile={tmp}"],
         check=False,
     )
 

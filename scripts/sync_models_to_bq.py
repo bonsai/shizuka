@@ -1,16 +1,16 @@
-"""Read models.json and sync to BigQuery providers/cli_priority tables.
-Usage: python scripts/sync_models_to_bq.py | cmd.exe /c "bq query --nouse_legacy_sql --project_id=yok-ai-2026"
-"""
-import json, sys
+"""Read models.json and sync to BigQuery providers/cli_priority tables."""
+import json, subprocess, sys, os, tempfile
 from pathlib import Path
 
+BQ = r"C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\bq.cmd"
+PROJECT = "yok-ai-2026"
+
 repo = Path(__file__).resolve().parent.parent
-models = json.loads((repo / "models.json").read_text())
+models = json.loads((repo / "models.json").read_text(encoding="utf-8"))
 
 providers: dict[str, dict] = {}
 priority_entries: list[dict] = []
 
-# Collect all unique provider/model combos from priorities
 for cli_entry in models.get("priorities", []):
     cli = cli_entry["cli"]
     for i, ent in enumerate(cli_entry.get("entries", [])):
@@ -33,10 +33,8 @@ for cli_entry in models.get("priorities", []):
             "model_key": mk or ent["provider"],
         })
 
-# Overlay cost/quality from modelSpecs
 for spec in models.get("modelSpecs", []):
     pk = f"{spec['provider']}/{spec['model']}" if spec['model'] else spec['provider']
-    # Also try matching by model_key
     mk = spec["model"]
     if pk in providers:
         p = providers[pk]
@@ -48,17 +46,14 @@ for spec in models.get("modelSpecs", []):
         p["quality_high"] = q.get("high", 5)
         p["quality_code"] = q.get("code", 5)
 
-# Mark DeepSeek as paid
 for p in providers.values():
     if p["provider"] in ("deepseek", "openai") and "deepseek" in p["model_key"]:
         p["tier"] = "paid"
 
-# Also mark aihubmix paid models
 for p in providers.values():
     if p["provider"] == "aihubmix" and p["cost_in"] > 0:
         p["tier"] = "paid"
 
-# Generate REPLACE statement for providers
 now = __import__("datetime").datetime.now().isoformat()
 prov_rows = []
 for pk, p in sorted(providers.items(), key=lambda x: x[1]["priority"]):
@@ -73,29 +68,35 @@ for pk, p in sorted(providers.items(), key=lambda x: x[1]["priority"]):
         f"{p['priority']}, '{note}', TIMESTAMP('{now}'))"
     )
 
-print("CREATE OR REPLACE TABLE model_status.providers")
-print("(model_key STRING, provider STRING, model_id STRING, tier STRING,")
-print(" cost_in FLOAT64, quality_low INT64, quality_mid INT64,")
-print(" quality_high INT64, quality_code INT64,")
-print(" priority INT64, note STRING, updated_at TIMESTAMP)")
-print("CLUSTER BY priority, provider AS (")
-print("  SELECT * FROM UNNEST([")
-print(",\n".join(prov_rows))
-print("  ])")
-print(");")
-
-# Separate: DeepSeek paid models from openai config
-print()
-print("CREATE OR REPLACE TABLE model_status.cli_priority")
-print("(cli STRING, priority INT64, model_key STRING)")
-print("CLUSTER BY cli, priority AS (")
-print("  SELECT * FROM UNNEST([")
 cli_rows = []
 for pe in priority_entries:
     mk = pe["model_key"].replace("'", "\\'")
     cli_rows.append(f"('{pe['cli']}', {pe['priority']}, '{mk}')")
-print(",\n".join(cli_rows))
-print("  ])")
-print(");")
 
-print(f"-- Synced {len(providers)} providers, {len(priority_entries)} CLI priorities", file=sys.stderr)
+parts = [
+    f"CREATE OR REPLACE TABLE model_status.providers "
+    f"(model_key STRING, provider STRING, model_id STRING, tier STRING, "
+    f"cost_in FLOAT64, quality_low INT64, quality_mid INT64, "
+    f"quality_high INT64, quality_code INT64, "
+    f"priority INT64, note STRING, updated_at TIMESTAMP) "
+    f"CLUSTER BY priority, provider AS ("
+    f"  SELECT * FROM UNNEST([\n" + ",\n".join(prov_rows) + "\n  ])"
+    f");",
+    f"CREATE OR REPLACE TABLE model_status.cli_priority "
+    f"(cli STRING, priority INT64, model_key STRING) "
+    f"CLUSTER BY cli, priority AS ("
+    f"  SELECT * FROM UNNEST([\n" + ",\n".join(cli_rows) + "\n  ])"
+    f");",
+]
+
+if __name__ == "__main__":
+    sql = "\n".join(parts)
+    tmp = os.path.join(tempfile.gettempdir(), "sync_models.sql")
+    with open(tmp, "w") as f:
+        f.write(sql)
+    subprocess.run(
+        [BQ, "query", "--nouse_legacy_sql", f"--project_id={PROJECT}", f"--flagfile={tmp}"],
+        check=False,
+    )
+    print(f"Synced {len(providers)} providers, {len(priority_entries)} CLI priorities", file=sys.stderr)
+    print("done")

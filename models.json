@@ -16,63 +16,28 @@
       "entries": [
         {
           "provider": "opencode-zen",
-          "model": "",
-          "note": "zen"
+          "model": "big-pickle",
+          "note": "無料stealth"
         },
         {
           "provider": "openrouter",
           "model": "openrouter/owl-alpha",
-          "note": "free pool"
+          "note": "無料best"
         },
         {
-          "provider": "openrouter",
-          "model": "qwen/qwen3-coder:free",
-          "note": "free pool"
+          "provider": "dashscope",
+          "useRotation": true,
+          "note": "Qwen無料枠"
         },
         {
-          "provider": "openrouter",
-          "model": "openai/gpt-oss-120b:free",
-          "note": "free pool"
+          "provider": "sakura",
+          "model": "Qwen3-Coder-480B-A35B-Instruct-FP8",
+          "note": "$0.2 コード"
         },
         {
-          "provider": "openrouter",
-          "model": "openai/gpt-oss-20b:free",
-          "note": "free pool"
-        },
-        {
-          "provider": "openrouter",
-          "model": "meta-llama/llama-3.3-70b-instruct:free",
-          "note": "free pool"
-        },
-        {
-          "provider": "openrouter",
-          "model": "qwen/qwen3-next-80b-a3b-instruct:free",
-          "note": "free pool"
-        },
-        {
-          "provider": "openrouter",
-          "model": "google/gemma-4-31b-it:free",
-          "note": "free pool"
-        },
-        {
-          "provider": "openrouter",
-          "model": "google/gemma-4-26b-a4b-it:free",
-          "note": "free pool"
-        },
-        {
-          "provider": "openrouter",
-          "model": "nousresearch/hermes-3-llama-3.1-405b:free",
-          "note": "free pool"
-        },
-        {
-          "provider": "openrouter",
-          "model": "nvidia/nemotron-3-super-120b-a12b:free",
-          "note": "free pool"
-        },
-        {
-          "provider": "openrouter",
-          "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
-          "note": "free pool"
+          "provider": "deepseek",
+          "model": "deepseek-v4-flash",
+          "note": "$0.14"
         }
       ]
     },
