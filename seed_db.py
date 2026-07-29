@@ -1,10 +1,11 @@
 """seed_db.py — unified models.db に models.json からデータを投入"""
 import json
+import os
 import sqlite3
 import sys
 from pathlib import Path
 
-MEGA = Path.home() / "Documents" / "MEGA"
+MEGA = Path(os.environ.get("MEGA", Path.home() / "Documents" / "MEGA"))
 MODELS_JSON = MEGA / "shizuka" / "models.json"
 DB_DIR = Path.home() / "AppData" / "Roaming" / "model-manager"
 DB_PATH = DB_DIR / "models.db"
@@ -138,6 +139,11 @@ def main():
             last_error TEXT DEFAULT '', updated_at TEXT DEFAULT (datetime('now'))
         );
     """)
+    conn.commit()
+
+    conn.execute("DELETE FROM cli_priority")
+    conn.execute("DELETE FROM rotation_state")
+    conn.execute("DELETE FROM providers")
     conn.commit()
 
     seed_from_models_json(conn, cfg)

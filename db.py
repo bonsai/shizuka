@@ -59,6 +59,8 @@ CREATE TABLE IF NOT EXISTS usage_log (
     task_type   TEXT DEFAULT '',
     tokens_in   INTEGER DEFAULT 0,
     tokens_out  INTEGER DEFAULT 0,
+    cache_create_tokens INTEGER DEFAULT 0,
+    cache_read_tokens   INTEGER DEFAULT 0,
     cost        REAL DEFAULT 0,
     latency_ms  INTEGER DEFAULT 0,
     success     INTEGER DEFAULT 1,
@@ -84,6 +86,7 @@ CREATE TABLE IF NOT EXISTS ml_params (
 CREATE INDEX IF NOT EXISTS idx_usage_model ON usage_log(model_key, timestamp);
 CREATE INDEX IF NOT EXISTS idx_usage_cli ON usage_log(cli, timestamp);
 CREATE INDEX IF NOT EXISTS idx_usage_task ON usage_log(task_type);
+
 """
 
 
@@ -95,6 +98,16 @@ def get_db() -> sqlite3.Connection:
     conn.execute("PRAGMA foreign_keys=ON")
     # auto-schema
     conn.executescript(SCHEMA_SQL)
+    # migration: add columns to existing tables (ignore if already exist)
+    for col in ("cache_create_tokens", "cache_read_tokens", "source_id"):
+        try:
+            conn.execute(f"ALTER TABLE usage_log ADD COLUMN {col} TEXT DEFAULT ''")
+        except sqlite3.OperationalError:
+            pass
+    try:
+        conn.execute("CREATE UNIQUE INDEX IF NOT EXISTS idx_usage_source ON usage_log(cli, source_id) WHERE source_id != ''")
+    except sqlite3.OperationalError:
+        pass
     conn.commit()
     return conn
 
@@ -179,18 +192,24 @@ def delete_cli_priority(conn: sqlite3.Connection, cli: str, priority: int):
 
 def log_usage(conn: sqlite3.Connection, cli: str, model_key: str,
               task_type: str = "", tokens_in: int = 0, tokens_out: int = 0,
+              cache_create_tokens: int = 0, cache_read_tokens: int = 0,
               cost: float = 0, latency_ms: int = 0, success: bool = True,
-              error_msg: str = ""):
-    conn.execute(
-        """INSERT INTO usage_log
+              error_msg: str = "", timestamp: str = None, source_id: str = ""):
+    ts = timestamp or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
+    cur = conn.execute(
+        """INSERT OR IGNORE INTO usage_log
            (cli, model_key, task_type, tokens_in, tokens_out,
-            cost, latency_ms, success, error_msg)
-           VALUES (?,?,?,?,?, ?,?,?,?)""",
+            cache_create_tokens, cache_read_tokens,
+            cost, latency_ms, success, error_msg, timestamp, source_id)
+           VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?)""",
         (cli, model_key, task_type, tokens_in, tokens_out,
-         cost, latency_ms, 1 if success else 0, error_msg),
+         cache_create_tokens, cache_read_tokens,
+         cost, latency_ms, 1 if success else 0, error_msg, ts, source_id),
     )
     conn.commit()
-    _update_recovery_estimate(conn, model_key)
+    if cur.rowcount:
+        _update_recovery_estimate(conn, model_key)
+    return cur.rowcount
 
 
 def get_usage(conn: sqlite3.Connection, days: int = 7, cli: str = None) -> list[sqlite3.Row]:
@@ -213,7 +232,9 @@ def get_usage(conn: sqlite3.Connection, days: int = 7, cli: str = None) -> list[
 def get_daily_usage(conn: sqlite3.Connection, days: int = 14) -> list[sqlite3.Row]:
     return conn.execute("""
         SELECT date(timestamp) AS day, SUM(tokens_in) as t_in,
-               SUM(tokens_out) as t_out
+               SUM(tokens_out) as t_out,
+               SUM(cache_create_tokens) as t_cache_create,
+               SUM(cache_read_tokens) as t_cache_read
         FROM usage_log
         WHERE date(timestamp) >= date('now', ?)
         GROUP BY day ORDER BY day
@@ -222,20 +243,24 @@ def get_daily_usage(conn: sqlite3.Connection, days: int = 14) -> list[sqlite3.Ro
 
 def get_cli_totals(conn: sqlite3.Connection, days: int = 14) -> list[sqlite3.Row]:
     return conn.execute("""
-        SELECT cli, SUM(tokens_in) as t_in, SUM(tokens_out) as t_out
+        SELECT cli, SUM(tokens_in) as t_in, SUM(tokens_out) as t_out,
+               SUM(cache_create_tokens) as t_cache_create,
+               SUM(cache_read_tokens) as t_cache_read
         FROM usage_log
         WHERE date(timestamp) >= date('now', ?)
-        GROUP BY cli ORDER BY SUM(tokens_in + tokens_out) DESC
+        GROUP BY cli ORDER BY SUM(tokens_in + tokens_out + cache_create_tokens + cache_read_tokens) DESC
     """, [f"-{days} days"]).fetchall()
 
 
 def get_provider_totals(conn: sqlite3.Connection, days: int = 14) -> list[sqlite3.Row]:
     return conn.execute("""
-        SELECT p.provider, SUM(u.tokens_in) as t_in, SUM(u.tokens_out) as t_out
+        SELECT p.provider, SUM(u.tokens_in) as t_in, SUM(u.tokens_out) as t_out,
+               SUM(u.cache_create_tokens) as t_cache_create,
+               SUM(u.cache_read_tokens) as t_cache_read
         FROM usage_log u
         JOIN providers p ON p.model_key = u.model_key
         WHERE date(u.timestamp) >= date('now', ?)
-        GROUP BY p.provider ORDER BY SUM(u.tokens_in + u.tokens_out) DESC
+        GROUP BY p.provider ORDER BY SUM(u.tokens_in + u.tokens_out + u.cache_create_tokens + u.cache_read_tokens) DESC
     """, [f"-{days} days"]).fetchall()
 
 

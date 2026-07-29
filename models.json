@@ -180,6 +180,26 @@
       ]
     },
     {
+      "cli": "grok",
+      "entries": [
+        {
+          "provider": "openrouter",
+          "model": "openrouter/owl-alpha",
+          "note": "無料プール"
+        },
+        {
+          "provider": "dashscope",
+          "useRotation": true,
+          "note": "Qwen無料枠"
+        },
+        {
+          "provider": "sakura",
+          "model": "preview/Kimi-K2.6",
+          "note": "Kimi"
+        }
+      ]
+    },
+    {
       "cli": "hermes",
       "entries": [
         {
@@ -525,6 +545,17 @@
     {
       "provider": "openrouter",
       "model": "google/gemini-2.0-flash-exp:free",
+      "costIn": 0,
+      "quality": {
+        "low": 7,
+        "mid": 7,
+        "high": 7,
+        "code": 7
+      }
+    },
+    {
+      "provider": "openrouter",
+      "model": "openrouter/owl-alpha",
       "costIn": 0,
       "quality": {
         "low": 7,

@@ -1,12 +1,14 @@
 """state_writer.py — 各 CLI の設定を書き換え (Apply)"""
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 
 HOME = Path.home()
 MEGA = Path(os.environ.get("MEGA", HOME / "Documents" / "MEGA"))
 LOCAL_APPDATA = Path(os.environ.get("LOCALAPPDATA", HOME / "AppData" / "Local"))
+GROK_CONFIG = HOME / ".grok" / "config.toml"
 
 
 # ── API key resolution ─────────────────────────────────────────────────────
@@ -23,6 +25,41 @@ def _sakura_api_key() -> str:
     except Exception:
         pass
     return os.environ.get("SAKURA_API_KEY", "")
+
+
+def _toml_quote(value: str) -> str:
+    return value.replace("\\", "\\\\").replace('"', '\\"')
+
+
+def _replace_toml_section(text: str, header: str, body_lines: list[str]) -> str:
+    block = header + "\n" + "\n".join(body_lines).rstrip() + "\n"
+    pattern = re.compile(rf"(?ms)^{re.escape(header)}\n.*?(?=^\[|\Z)")
+    if pattern.search(text):
+        return pattern.sub(block, text, count=1).rstrip() + "\n"
+    if not text.strip():
+        return block
+    return text.rstrip() + "\n\n" + block
+
+
+def _replace_models_default(text: str, default_name: str) -> str:
+    pattern = re.compile(r"(?ms)^\[models\]\n.*?(?=^\[|\Z)")
+    match = pattern.search(text)
+    if match:
+        lines = match.group(0).rstrip("\n").splitlines()
+        updated = False
+        for i, line in enumerate(lines[1:], start=1):
+            if re.match(r"^\s*default\s*=", line):
+                lines[i] = f'default = "{default_name}"'
+                updated = True
+                break
+        if not updated:
+            lines.insert(1, f'default = "{default_name}"')
+        block = "\n".join(lines) + "\n"
+        return pattern.sub(block, text, count=1).rstrip() + "\n"
+    block = "[models]\n" + f'default = "{default_name}"\n'
+    if not text.strip():
+        return block
+    return text.rstrip() + "\n\n" + block
 
 
 # ── Qwen ───────────────────────────────────────────────────────────────────
@@ -53,6 +90,31 @@ def _apply_qwen(provider: str, model: str):
 
     cfg["model"] = {"name": model}
     path.write_text(json.dumps(cfg, indent=2, ensure_ascii=False), encoding="utf-8")
+
+
+# ── Grok ──────────────────────────────────────────────────────────────────
+
+def _apply_grok(provider: str, model: str):
+    section_map = {
+        "sakura": ("sakura2", "https://api.ai.sakura.ad.jp/v1", "SAKURA_AI_TOKEN"),
+        "dashscope": ("dashscope", "https://dashscope-intl.aliyuncs.com/compatible-mode/v1", "DASHSCOPE_API_KEY"),
+        "openrouter": ("openrouter", "https://openrouter.ai/api/v1", "OPENROUTER_API_KEY"),
+    }
+    if provider not in section_map:
+        raise ValueError(f"unsupported Grok provider: {provider}")
+
+    section_name, base_url, env_key = section_map[provider]
+    path = GROK_CONFIG
+    path.parent.mkdir(parents=True, exist_ok=True)
+    text = path.read_text(encoding="utf-8") if path.exists() else ""
+    text = _replace_toml_section(text, f"[model.{section_name}]", [
+        f'model = "{_toml_quote(model)}"',
+        f'base_url = "{base_url}"',
+        f'env_key = "{env_key}"',
+        'api_backend = "chat_completions"',
+    ])
+    text = _replace_models_default(text, section_name)
+    path.write_text(text, encoding="utf-8")
 
 
 # ── OpenCode ───────────────────────────────────────────────────────────────
@@ -201,6 +263,7 @@ def _apply_crush(which: str, provider: str, model: str):
 def apply(cli: str, provider: str, model: str):
     dispatch = {
         "qwen": _apply_qwen,
+        "grok": _apply_grok,
         "opencode": _apply_opencode,
         "cline": _apply_cline,
         "codex": _apply_codex,

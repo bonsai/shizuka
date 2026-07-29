@@ -107,6 +107,60 @@ def read_qwen() -> CLIState:
     return s
 
 
+def _read_simple_toml_sections(path: Path) -> dict[str, dict[str, str]]:
+    try:
+        raw = path.read_text(encoding="utf-8-sig")
+    except Exception:
+        return {}
+    sections: dict[str, dict[str, str]] = {}
+    current = ""
+    for line in raw.splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        section_match = re.match(r"^\[(.+)\]$", stripped)
+        if section_match:
+            current = section_match.group(1)
+            sections.setdefault(current, {})
+            continue
+        if current and "=" in line:
+            key, value = line.split("=", 1)
+            sections.setdefault(current, {})[key.strip()] = value.strip().strip('"')
+    return sections
+
+
+def read_grok() -> CLIState:
+    s = CLIState("grok")
+    cfg = _read_simple_toml_sections(HOME / ".grok" / "config.toml")
+    if not cfg:
+        return s
+
+    default_section = cfg.get("models", {}).get("default", "").strip()
+    section_name = default_section
+    if not section_name:
+        for candidate in ("openrouter", "sakura2", "dashscope"):
+            if f"model.{candidate}" in cfg:
+                section_name = candidate
+                break
+
+    if not section_name:
+        return s
+
+    section = cfg.get(f"model.{section_name}", {})
+    s.model = section.get("model", "")
+    base_url = section.get("base_url", "").lower()
+    if section_name in ("sakura", "sakura2") or "sakura" in base_url:
+        s.provider = "sakura"
+    elif section_name == "openrouter" or "openrouter" in base_url:
+        s.provider = "openrouter"
+    elif section_name == "dashscope" or "dashscope" in base_url:
+        s.provider = "dashscope"
+    else:
+        s.provider = section_name
+    s.priority = _infer_priority("grok", s.provider, s.model)
+    return s
+
+
 def read_opencode() -> CLIState:
     s = CLIState("opencode")
     cfg = _read_jsonc(HOME / ".config" / "opencode" / "opencode.jsonc")
@@ -327,7 +381,7 @@ def read_crush(which: str) -> CLIState:
 
 ALL_READERS = [
     read_qwen, read_opencode, read_cline, read_codex,
-    read_gemini, read_kilo, read_kiro, read_claude,
+    read_grok, read_gemini, read_kilo, read_kiro, read_claude,
     read_qwencode, read_goose,
     lambda: read_crush("large"),
     lambda: read_crush("small"),
