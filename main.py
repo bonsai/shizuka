@@ -29,6 +29,9 @@ from state_writer import apply
 from recommend import recommend
 from usage import format_usage
 from quota import check_anthropic_quota, format_quota, quota_history
+from collector import collect_all
+from analyze import run_analyze
+from timer import plan as timer_plan, status as timer_status, done as timer_done, cancel as timer_cancel, history as timer_history, pomodoro as timer_pomodoro, pbreak as timer_pbreak
 
 
 def cmd_status():
@@ -123,9 +126,9 @@ def cmd_quota(target="anthropic"):
 def main():
     parser = argparse.ArgumentParser(description="shizuka — unified CLI model switcher")
     parser.add_argument("action", nargs="?", default="list",
-                        help="status|list|csv|priority|recommend|usage|rotate|quota|--mcp")
+                        help="status|list|csv|priority|recommend|usage|rotate|quota|collect|analyze|plan|--mcp")
     parser.add_argument("args", nargs="*", help="arguments")
-    parser.add_argument("--days", type=int, default=14, help="days for usage graph")
+    parser.add_argument("--days", type=int, default=14, help="days for usage graph / collect window")
     parser.add_argument("--task", default="mid", help="task type: low|mid|high|code")
 
     args = parser.parse_args()
@@ -150,6 +153,31 @@ def main():
         cmd_rotate()
     elif action == "usage":
         print(format_usage(args.days))
+    elif action == "analyze":
+        print(run_analyze())
+    elif action == "plan":
+        if not args.args:
+            print(timer_status())
+        elif args.args[0] == "done":
+            print(timer_done())
+        elif args.args[0] == "cancel":
+            print(timer_cancel())
+        elif args.args[0] == "pomodoro" or args.args[0] == "p":
+            task = " ".join(args.args[1:]) if len(args.args) > 1 else ""
+            print(timer_pomodoro(task))
+        elif args.args[0] == "pbreak" or args.args[0] == "pb":
+            print(timer_pbreak())
+        elif args.args[0] == "--history" or args.args[0] == "-h":
+            days = int(args.args[1]) if len(args.args) > 1 else 7
+            print(timer_history(days))
+        elif len(args.args) >= 1 and args.args[0].isdigit():
+            print(timer_history(int(args.args[0])))
+        elif len(args.args) >= 2:
+            minutes = int(args.args[-1])
+            task = " ".join(args.args[:-1])
+            print(timer_plan(task, minutes))
+        else:
+            print("usage: plan <task> <minutes>  |  plan done  |  plan cancel  |  plan [days]")
     elif action == "recommend":
         recs = recommend(args.task)
         label_map = {"low": "低負荷 (low)", "mid": "中負荷 (mid)",
@@ -162,6 +190,17 @@ def main():
             model = (r["model"][:34] + "...") if len(r["model"]) > 36 else r["model"]
             avail = "✓" if r["available"] else "✗"
             print(f"{i:<3}  {r['cli']:<13}  {r['provider']:<22}  {model:<36}  {r['score']:<7.1f}  [{avail}] {r['reason']}")
+    elif action == "collect":
+        conn = get_db()
+        days = args.args[0] if args.args else None
+        if days is not None:
+            try:
+                days = int(days)
+            except ValueError:
+                days = None
+        n = collect_all(conn, days=days)
+        conn.close()
+        print(f"✓ collected {n} records")
     elif action == "quota":
         target = args.args[0] if args.args else "anthropic"
         cmd_quota(target)

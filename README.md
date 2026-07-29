@@ -11,7 +11,7 @@ FREE優先・コスト最適・タスク適合で最適モデルを自動選択�
 | DB統一 | `data.db` + `model-status.db` → unified `models.db` |
 | 39 providers | 全優先度チェーンをシード、70件のcli_priority |
 | MCP stdio | Go MCP → Python MCP (protocol 2024-11-05) |
-| 設定読取 | `state_reader.py` で全CLI (qwen/opencode/cline/gemini/kilo/kiro/claude/qwencode/goose/crush等) の現在設定をJSONから読取 |
+| 設定読取 | `state_reader.py` で全CLI (qwen/grok/opencode/cline/codex/gemini/kilo/kiro/claude/qwencode/goose/crush等) の現在設定をJSONから読取 |
 | seeds | `models.json` → `models.db` へのseed完了、migration.py で旧DBからusage_log移行 |
 
 ## アーキテクチャ
@@ -38,7 +38,7 @@ BQ (model_status) ──→ 分析専用 (#24 bq_sync.py 作成予定)
 | `main.py` | CLIエントリポイント: status / list / recommend / usage / quota / set / priority / next / rotate / exhausted / csv |
 | `mcp_server.py` | MCP stdio サーバ。全 mm_* ツール |Git
 | `db.py` | models.db への全DB操作 (CRUD + クエリ) |
-| `state_reader.py` | 各CLI設定ファイル読み取り (qwen / opencode / cline / codex / gemini / kilo / kiro / claude / qwencode / goose / crush) |
+| `state_reader.py` | 各CLI設定ファイル読み取り (qwen / grok / opencode / cline / codex / gemini / kilo / kiro / claude / qwencode / goose / crush) |
 | `state_writer.py` | 各CLI設定ファイル書き込み |
 | `recommend.py` | スコアリングエンジン: quality × cost × quota |
 | `usage.py` | 使用量グラフ生成 (token consumption over N days) |
