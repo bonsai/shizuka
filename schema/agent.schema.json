@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "shizuka",
+  "type": "object",
+  "required": [
+    "name",
+    "role",
+    "mission",
+    "duties",
+    "tools"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "role": {
+      "type": "string"
+    },
+    "mission": {
+      "type": "string"
+    },
+    "duties": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "lifecycle": {
+      "enum": [
+        "permanent",
+        "reusable",
+        "experimental",
+        "ephemeral",
+        "archived"
+      ]
+    }
+  }
+}
