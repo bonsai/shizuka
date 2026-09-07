@@ -114,3 +114,22 @@ GitHub Issues: https://github.com/bonsai/shizuka/issues
 - `ADR.md` — アーキテクチャ決定記録
 - `ONTOLOGY.md` — 概念定義
 - `cost_opt_report.md` — コスト最適化分析
+
+
+（クラウドリンク）
+
+| model-agent-skill | [https://github.com/bonsai/model-agent-skill](https://github.com/bonsai/model-agent-skill) | 関連 tool/skill repo |
+| openrouter-models | [https://github.com/bonsai/openrouter-models](https://github.com/bonsai/openrouter-models) | 関連 tool/skill repo |
+
+## 構成
+
+```
+AGENT.md              定義（role / mission / duties）
+schema/agent.schema.json  定義スキーマ
+tools/                （tool repo へのリンク＝上記 Spec 対象）
+```
+
+## 参照
+
+- 実行基盤: [gh-aw](https://github.com/bonsai/gh-aw) — Archimedes の Task を GitHub 操作として実行
+- 設計層: [archimedes](https://github.com/bonsai/archimedes) — SCAN→CLUSTER→ADVISE→TASK
