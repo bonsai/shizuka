@@ -8,7 +8,7 @@ from pathlib import Path
 
 MEGA = Path(os.environ.get("MEGA", Path.home() / "Documents" / "MEGA"))
 MODELS_YAML = MEGA / "models.agents.md"
-PROJECT = "yok-ai-2026"
+PROJECT = "inochi-489017"
 DATASET = "model_status"
 
 
@@ -38,7 +38,25 @@ def _convert_row(r: dict) -> dict:
 
 
 def _bq(sql: str) -> list[dict]:
-    """Execute a BQ query and return rows as dicts via `bq query --format=json`."""
+    """Execute a BQ query and return rows as dicts (Python lib preferred, cmd.exe fallback)."""
+    try:
+        from google.cloud import bigquery
+        import datetime as _dt
+        client = bigquery.Client(project=PROJECT)
+        out = []
+        for r in client.query(sql).result():
+            d = {}
+            for k, v in dict(r).items():
+                if isinstance(v, (_dt.datetime, _dt.date)):
+                    v = v.isoformat()
+                d[k] = v
+            out.append(_convert_row(d))
+        return out
+    except ImportError:
+        pass
+    except Exception as e:
+        print(f"BQ lib error: {e}", file=sys.stderr)
+        return []
     flat = " ".join(sql.split())
     cmd = ["cmd.exe", "/c", "bq", "query", "--use_legacy_sql=false", "--format=json",
            "--project_id", PROJECT, flat]

@@ -1,9 +1,9 @@
 """Read models.json and sync to BigQuery providers/cli_priority tables."""
-import json, subprocess, sys, os, tempfile
+import json, shutil, subprocess, sys, os, tempfile
 from pathlib import Path
 
 BQ = r"C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\bq.cmd"
-PROJECT = "yok-ai-2026"
+PROJECT = "inochi-489017"
 
 repo = Path(__file__).resolve().parent.parent
 models = json.loads((repo / "models.json").read_text(encoding="utf-8"))
@@ -89,14 +89,26 @@ parts = [
     f");",
 ]
 
-if __name__ == "__main__":
-    sql = "\n".join(parts)
-    tmp = os.path.join(tempfile.gettempdir(), "sync_models.sql")
+def _run(sql: str, tmpname: str):
+    """Run DDL/DML via Python BQ lib preferred, bq CLI fallback."""
+    try:
+        from google.cloud import bigquery
+        bigquery.Client(project=PROJECT).query(sql).result()
+        return
+    except ImportError:
+        pass
+    tmp = os.path.join(tempfile.gettempdir(), tmpname)
     with open(tmp, "w") as f:
         f.write(sql)
+    bq_bin = shutil.which("bq") or BQ
     subprocess.run(
-        [BQ, "query", "--nouse_legacy_sql", f"--project_id={PROJECT}", f"--flagfile={tmp}"],
+        [bq_bin, "query", "--nouse_legacy_sql", f"--project_id={PROJECT}", f"--flagfile={tmp}"],
         check=False,
     )
+
+
+if __name__ == "__main__":
+    sql = "\n".join(parts)
+    _run(sql, "sync_models.sql")
     print(f"Synced {len(providers)} providers, {len(priority_entries)} CLI priorities", file=sys.stderr)
     print("done")

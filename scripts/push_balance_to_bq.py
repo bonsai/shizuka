@@ -3,7 +3,7 @@ import json, subprocess, sys, os, tempfile
 from datetime import datetime, timezone
 
 BQ = r"C:\Program Files (x86)\Google\Cloud SDK\google-cloud-sdk\bin\bq.cmd"
-PROJECT = "yok-ai-2026"
+PROJECT = "inochi-489017"
 HAMACHI_DIR = r"C:\Users\dance\Documents\MEGA\hamachi\py"
 
 def run_hamachi():
