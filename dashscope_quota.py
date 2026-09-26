@@ -35,7 +35,9 @@ def show_db():
 
 def try_api_check():
     """Quick DashScope API quota check (requires API key)"""
-    key = os.environ.get('DASHSCOPE_API_KEY') or "REDACTED"
+    key = os.environ.get("DASHSCOPE_API_KEY")
+    if not key:
+        raise SystemExit("DASHSCOPE_API_KEY is not set (hardcoding keys is forbidden)")
     model = "qwen3.7-max-2026-05-17"
     # This is a simple ping to check if quota remains
     req = Request(
